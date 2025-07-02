@@ -54,4 +54,50 @@ class BasketTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $basket->add('INVALID');
     }
+
+    public function testBasketWithB01AndG01(): void
+    {
+        $basket = new Basket($this->catalogue, $this->deliveryRules, $this->offers);
+        $basket->add('B01');
+        $basket->add('G01');
+
+        // $7.95 + $24.95 = $32.90 → < $50 → + $4.95 delivery = 37.85
+        $this->assertEquals(37.85, $basket->total());
+    }
+
+    public function testBasketWithTwoR01(): void
+    {
+        $basket = new Basket($this->catalogue, $this->deliveryRules, $this->offers);
+        $basket->add('R01');
+        $basket->add('R01');
+
+        // First full price: $32.95, second half: $16.48 = $49.43 + $4.95 = 54.38 → rounded = 54.37
+        $this->assertEquals(54.37, $basket->total());
+    }
+
+    public function testBasketWithR01AndG01(): void
+    {
+        $basket = new Basket($this->catalogue, $this->deliveryRules, $this->offers);
+        $basket->add('R01');
+        $basket->add('G01');
+
+        // $32.95 + $24.95 = $57.90 → + $2.95 delivery = 60.85
+        $this->assertEquals(60.85, $basket->total());
+    }
+
+    public function testBasketWithThreeR01AndTwoB01(): void
+    {
+        $basket = new Basket($this->catalogue, $this->deliveryRules, $this->offers);
+        $basket->add('B01');
+        $basket->add('B01');
+        $basket->add('R01');
+        $basket->add('R01');
+        $basket->add('R01');
+
+        // R01: 3 items → 2 full price ($32.95), 1 half price ($16.48)
+        // B01: 2 x $7.95
+        // Product total: (2×32.95 + 1×16.48 + 2×7.95) = 93.32 → Free delivery
+        $this->assertEquals(98.27, $basket->total());
+    }
+
 }

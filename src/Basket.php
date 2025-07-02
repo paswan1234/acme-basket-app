@@ -52,9 +52,42 @@ class Basket implements BasketInterface
      */
     public function total(): float
     {
-        // We'll implement this in the next step.
-        return 0.0;
+        $subtotal = 0.0;
+
+        // Count how many of each product were added
+        $itemCounts = array_count_values($this->items);
+
+        // Apply prices and offers
+        foreach ($itemCounts as $code => $quantity) {
+            $price = $this->catalogue[$code];
+
+            // Red Widget Offer: Buy 1 get 2nd half price
+           if ($code === 'R01' && isset($this->offers[$code])) {
+            $fullPriceQty = intdiv($quantity, 2) + ($quantity % 2);
+            $halfPriceQty = $quantity - $fullPriceQty;
+
+            // Apply rounding 
+            $halfPrice = floor(($price / 2) * 100) / 100;
+
+            $subtotal += ($fullPriceQty * $price) + ($halfPriceQty * $halfPrice);
+        } else {
+            $subtotal += $price * $quantity;
+        }
+
+        }
+
+        // Apply delivery rules based on subtotal
+        $deliveryCharge = 0.0;
+        foreach ($this->deliveryRules as $minTotal => $charge) {
+            if ($subtotal >= $minTotal) {
+                $deliveryCharge = $charge;
+                break;
+            }
+        }
+
+        return round($subtotal + $deliveryCharge, 2);
     }
+
 
     /**
      * Returns all items in the basket (used for testing).
