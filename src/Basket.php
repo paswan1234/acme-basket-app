@@ -10,18 +10,32 @@ use InvalidArgumentException;
  */
 class Basket implements BasketInterface
 {
-    // Typed properties for PHP 7.4+ or 8+
+    /**
+     * @var array<string, float> Product catalogue: productCode => price
+     */
     private array $catalogue;
+
+    /**
+     * @var array<int, float> Delivery rules: minOrderTotal => deliveryFee
+     */
     private array $deliveryRules;
+
+    /**
+     * @var array<string, array<string, mixed>> Offers by product code
+     */
     private array $offers;
+
+    /**
+     * @var string[] List of product codes added to basket
+     */
     private array $items = [];
 
     /**
      * Basket constructor.
      *
-     * @param array $catalogue       Array of productCode => price
-     * @param array $deliveryRules   Array of minOrderTotal => deliveryCost
-     * @param array $offers          Array of offer rules (e.g., BOGO discounts)
+     * @param array<string, float> $catalogue       Array of productCode => price
+     * @param array<int, float> $deliveryRules   Array of minOrderTotal => deliveryCost
+     * @param array<string, array<string, mixed>> $offers          Array of offer rules 
      */
     public function __construct(array $catalogue, array $deliveryRules, array $offers)
     {
@@ -46,7 +60,7 @@ class Basket implements BasketInterface
     }
 
     /**
-     * Returns the total cost of the basket (to be implemented next).
+     * Returns the total cost of the basket.
      *
      * @return float
      */
@@ -90,9 +104,9 @@ class Basket implements BasketInterface
 
 
     /**
-     * Returns all items in the basket (used for testing).
+     * Returns all items in the basket.
      *
-     * @return array
+     * @return string[] Array of product codes
      */
     public function getItems(): array
     {
