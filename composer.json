@@ -1,0 +1,18 @@
+{
+    "name": "jitendra/acme-basket-app",
+    "description": "ACME Widget Co Basket system",
+    "autoload": {
+        "psr-4": {
+            "Jitendra\\AcmeBasketApp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jitendra"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^12.2"
+    }
+}
